@@ -23,6 +23,8 @@ Error ListInit(List *const list, const size_t initSize)
         list->data[i].nextIndex = cDefaultIndexValue;
     }
 
+    list->data[0].data = cZeroElementData;
+
     for (size_t i = 1; i < initSize; ++i)
     {
         list->freeIndexes[i - 1] = i;

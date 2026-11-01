@@ -9,6 +9,7 @@ typedef int ListElemData_t;
 
 const uint64_t cPoisonValue = 0xDED505Al;
 const int cDefaultIndexValue = 0;
+const ListElemData_t cZeroElementData = 316;
 
 struct ListElement
 {
