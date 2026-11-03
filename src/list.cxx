@@ -49,13 +49,13 @@ void ListFree(List *const list)
     return;
 }
 
-Error ListAddElement(List *const list, const ListElemData_t element, const int index)
+Error ListAddElement(List *const list, const ListElemData_t element, const unsigned number)
 {
     ASSERT(list);
     ASSERT(list->data);
     ASSERT(list->freeIndexes);
 
-    int prevElementIndex = list->data[index].prevIndex;
+    int prevElementIndex = ListGetElementByNumber(list, number)->prevIndex;
     int nextOfPrevElementIndex = list->data[prevElementIndex].nextIndex;
 
     if (list->freeIndexes[0] <= 0)
@@ -85,23 +85,26 @@ Error ListAddElement(List *const list, const ListElemData_t element, const int i
     return CreateSuccess();
 }
 
-Error ListRemoveElement(List *const list, int index)
+Error ListRemoveElement(List *const list, const unsigned number)
 {
     ASSERT(list);
     ASSERT(list->data);
     ASSERT(list->freeIndexes);
 
-    if (list->data[index].data == cPoisonValue)
-    {
-        char ctx[16] = {};
-        snprintf(ctx, 15, "%d", index);
-        return CreateError(ecNoSuchElementInList, ctx);
-    }
+    // if (list->data[index].data == cPoisonValue)
+    // {
+    //     char ctx[16] = {};
+    //     snprintf(ctx, 15, "%d", index);
+    //     return CreateError(ecNoSuchElementInList, ctx);
+    // }
 
     // index = list->data[list->data[index].prevIndex].nextIndex;
 
-    int prevElementIndex = list->data[index].prevIndex;
-    int nextElementIndex = list->data[index].nextIndex;
+    ListElement *elemToRemove = ListGetElementByNumber(list, number);
+    int indexOfElemToRemove = ListGetIndexOfElement(list, elemToRemove);
+
+    int prevElementIndex = elemToRemove->prevIndex;
+    int nextElementIndex = elemToRemove->nextIndex;
 
     list->data[prevElementIndex].nextIndex = nextElementIndex;
     list->data[nextElementIndex].prevIndex = prevElementIndex;
@@ -110,11 +113,11 @@ Error ListRemoveElement(List *const list, int index)
     {
         list->freeIndexes[i] = list->freeIndexes[i - 1];
     }
-    list->freeIndexes[0] = index;
+    list->freeIndexes[0] = indexOfElemToRemove;
 
-    list->data[index].nextIndex = 0;
-    list->data[index].prevIndex = 0;
-    list->data[index].data = cPoisonValue;
+    list->data[indexOfElemToRemove].nextIndex = 0;
+    list->data[indexOfElemToRemove].prevIndex = 0;
+    list->data[indexOfElemToRemove].data = cPoisonValue;
 
     return CreateSuccess();
 }
@@ -157,4 +160,27 @@ void ListDump(const List *const lst, const char *name, const char *fileCalledAt,
     fprintf(stderr, "---------------------------\n");
 
     return;
+}
+
+ListElement *ListGetElementByNumber(List *const list, const unsigned number)
+{
+    ASSERT(list);
+
+    ListElement *elemPtr = &list->data[0];
+
+    for (unsigned i = 0; i < number; i++)
+    {
+        elemPtr = &list->data[elemPtr->nextIndex];
+    }
+
+    return elemPtr;
+}
+
+int ListGetIndexOfElement(const List *const list, const ListElement *const element)
+{
+    ASSERT(list);
+    ASSERT(element);
+    ASSERT(element - list->data < list->size);
+
+    return element - list->data;
 }

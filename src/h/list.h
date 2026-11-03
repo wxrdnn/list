@@ -29,11 +29,15 @@ Error ListInit(List *const list, const size_t initSize);
 
 void ListFree(List *const list);
 
-Error ListAddElement(List *const list, const ListElemData_t element, const int index);
+Error ListAddElement(List *const list, const ListElemData_t element, const unsigned number);
 
-Error ListRemoveElement(List *const list, int index);
+Error ListRemoveElement(List *const list, const unsigned number);
 
 void ListDump(const List *const lst, const char *name, const char *fileCalledAt, const char *funcCalledAt,
               int lineCalledAt);
+
+ListElement *ListGetElementByNumber(List *const list, const unsigned number);
+
+int ListGetIndexOfElement(const List *const list, const ListElement *const element);
 
 #endif

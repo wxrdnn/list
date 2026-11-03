@@ -11,6 +11,12 @@ Error BuildGraph(const List *const list, FILE *const output)
 
     fprintf(output, "digraph G {\n");
 
+    fprintf(output, "splines=ortho;\n");
+
+    fprintf(output, "subgraph List {\n");
+
+    fprintf(output, "rank=same;\n");
+
     for (int i = 0; i < list->size; i++)
     {
         if (list->data[i].data == cPoisonValue)
@@ -24,7 +30,8 @@ Error BuildGraph(const List *const list, FILE *const output)
                 "shape=Mrecord;\n"
                 "style=\"filled\";\n"
                 "fillcolor=\"#C0FFC0\";\n"
-                "color=\"#008000\";\n");
+                "color=\"#008000\";\n"
+                "weight=50;\n");
 
         fprintf(output,
                 "label=\"{ index = %d | data = %d | { prev = %d | next = %d } }\";\n",
@@ -37,6 +44,11 @@ Error BuildGraph(const List *const list, FILE *const output)
 
         fprintf(output, "node_%d -> node_%d\n", i, list->data[i].nextIndex);
     }
+
+    fprintf(output, "}\n");
+
+    fprintf(output, "\nHEAD -> node_%d\n", list->data[0].prevIndex);
+    fprintf(output, "TAIL -> node_%d\n", list->data[0].nextIndex);
 
     fprintf(output, "}\n");
 
