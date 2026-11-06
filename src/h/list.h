@@ -33,9 +33,9 @@ Error ListAddBeforeElement(List *const list, const ListElemData_t element, const
 
 Error ListAddAfterElement(List *const list, const ListElemData_t element, const unsigned count);
 
-Error ListAddBeforeHead(List *const list, const ListElemData_t element);
+Error ListAddAfterHead(List *const list, const ListElemData_t element);
 
-Error ListAddAfterTail(List *const list, const ListElemData_t element);
+Error ListAddBeforeTail(List *const list, const ListElemData_t element);
 
 Error ListRemoveElement(List *const list, const unsigned count);
 

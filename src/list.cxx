@@ -121,22 +121,22 @@ Error ListAddAfterElement(List *const list, const ListElemData_t element, const 
     return CreateSuccess();
 }
 
-Error ListAddBeforeHead(List *const list, const ListElemData_t element)
+Error ListAddBeforeTail(List *const list, const ListElemData_t element)
 {
     ASSERT(list);
     ASSERT(list->data);
     ASSERT(list->freeIndexes);
 
-    return ListAddBeforeElement(list, element, ListGetElementCountByIndex(list, list->data[0].prevIndex));
+    return ListAddBeforeElement(list, element, 0);
 }
 
-Error ListAddAfterTail(List *const list, const ListElemData_t element)
+Error ListAddAfterHead(List *const list, const ListElemData_t element)
 {
     ASSERT(list);
     ASSERT(list->data);
     ASSERT(list->freeIndexes);
 
-    return ListAddAfterElement(list, element, ListGetElementCountByIndex(list, 0));
+    return ListAddAfterElement(list, element, ListGetElementCountByIndex(list, list->data[0].prevIndex));
 }
 
 Error ListRemoveElement(List *const list, const unsigned count)
