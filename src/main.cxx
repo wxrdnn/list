@@ -28,7 +28,7 @@ int main()
     // TODO Sort list
     // TODO List verification
     // TODO HTML log file
-    // TODO Fix system()
+    // DONE TODO Fix system()
     // DONE TODO Dump in order of index, not count
 
     List lst = {};
@@ -38,19 +38,20 @@ int main()
     SHUTDOWN_IF_ERROR_FAIL(ListInit(&lst, 10));
     ListDump(&lst, "lst", __FILE__, __FUNCTION__, __LINE__);
 
-    SHUTDOWN_IF_ERROR_FAIL(ListAddAfterHead(&lst, 10));
-    SHUTDOWN_IF_ERROR_FAIL(ListAddAfterHead(&lst, 20));
-    SHUTDOWN_IF_ERROR_FAIL(ListAddAfterHead(&lst, 30));
-    SHUTDOWN_IF_ERROR_FAIL(ListAddAfterHead(&lst, 40));
+    SHUTDOWN_IF_ERROR_FAIL(ListAddBeforeTail(&lst, 10));
+    SHUTDOWN_IF_ERROR_FAIL(ListAddBeforeTail(&lst, 20));
+    SHUTDOWN_IF_ERROR_FAIL(ListAddBeforeTail(&lst, 30));
+    SHUTDOWN_IF_ERROR_FAIL(ListAddBeforeTail(&lst, 40));
     // SHUTDOWN_IF_ERROR_FAIL(ListAddBeforeHead(&lst, 50));
 
     SHUTDOWN_IF_ERROR_FAIL(BuildGraph(&lst, fp));
 
-    int status = system("dot -Tpng \"" OUTPUT_FILE_NAME // FIXME !!!!!!
-                        "\" -o \"" OUTPUT_FILE_NAME ".png\"");
+    fclose(fp);
 
-    fprintf(stderr, "DEBUG: system() command: dot -Tpng \"" OUTPUT_FILE_NAME "\" -o \"" OUTPUT_FILE_NAME ".png\"\n");
-    fprintf(stderr, "DEBUG: system() status: %d\n", status);
+    int status = system("dot -Tpng \"" OUTPUT_FILE_NAME "\" -o \"" OUTPUT_FILE_NAME ".png\"");
+
+    // fprintf(stderr, "DEBUG: system() command: dot -Tpng \"" OUTPUT_FILE_NAME "\" -o \"" OUTPUT_FILE_NAME ".png\"\n");
+    // fprintf(stderr, "DEBUG: system() status: %d\n", status);
 
     SHUTDOWN(ecSuccess);
 }
