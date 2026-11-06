@@ -9,13 +9,22 @@ Error BuildGraph(const List *const list, FILE *const output)
     ASSERT(list);
     ASSERT(output);
 
-    fprintf(output, "digraph G {\n");
+    fprintf(output,
+            "digraph G {\n"
+            "nodesep=1;\n"
+            "ranksep=1;\n"
+            "splines=ortho;\n"
+            "subgraph List {\n"
+            "rank=same;\n");
 
-    fprintf(output, "splines=ortho;\n");
-
-    fprintf(output, "subgraph List {\n");
-
-    fprintf(output, "rank=same;\n");
+    for (int i = 1; i < list->size; i++)
+    {
+        if (list->data[i].data == cPoisonValue)
+        {
+            continue;
+        }
+        fprintf(output, "node_%d -> node_%d [style=invis];\n", i - 1, i);
+    }
 
     for (int i = 0; i < list->size; i++)
     {
@@ -34,8 +43,9 @@ Error BuildGraph(const List *const list, FILE *const output)
                 "weight=50;\n");
 
         fprintf(output,
-                "label=\"{ index = %d | data = %d | { prev = %d | next = %d } }\";\n",
+                "label=\"{ index = %d | count = %d | data = %d | { prev = %d | next = %d } }\";\n",
                 i,
+                i == 0 ? -1 : ListGetElementCountByIndex(list, i),
                 list->data[i].data,
                 list->data[i].prevIndex,
                 list->data[i].nextIndex);
@@ -43,6 +53,7 @@ Error BuildGraph(const List *const list, FILE *const output)
         fprintf(output, "];\n");
 
         fprintf(output, "node_%d -> node_%d\n", i, list->data[i].nextIndex);
+        // fprintf(output, "node_%d -> node_%d\n", i, i + 1);
     }
 
     fprintf(output, "}\n");

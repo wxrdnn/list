@@ -23,6 +23,13 @@
     }
 int main()
 {
+    // DONE TODO ListAddBeforeElement()
+    // DONE TODO ListAddAfterElement()
+    // TODO Sort list
+    // TODO List verification
+    // TODO HTML log file
+    // DONE TODO Dump in order of index, not count
+
     List lst = {};
 
     FILE *fp = fopen(OUTPUT_FILE_NAME, "w");
@@ -30,25 +37,13 @@ int main()
     SHUTDOWN_IF_ERROR_FAIL(ListInit(&lst, 10));
     ListDump(&lst, "lst", __FILE__, __FUNCTION__, __LINE__);
 
-    SHUTDOWN_IF_ERROR_FAIL(ListAddElement(&lst, 10, 1));
+    SHUTDOWN_IF_ERROR_FAIL(ListAddBeforeElement(&lst, 20, 0));
     ListDump(&lst, "lst", __FILE__, __FUNCTION__, __LINE__);
 
-    SHUTDOWN_IF_ERROR_FAIL(ListAddElement(&lst, 20, 2));
+    SHUTDOWN_IF_ERROR_FAIL(ListAddBeforeElement(&lst, 10, 1));
     ListDump(&lst, "lst", __FILE__, __FUNCTION__, __LINE__);
 
-    SHUTDOWN_IF_ERROR_FAIL(ListAddElement(&lst, 30, 3));
-    ListDump(&lst, "lst", __FILE__, __FUNCTION__, __LINE__);
-
-    SHUTDOWN_IF_ERROR_FAIL(ListAddElement(&lst, 22, 2));
-    ListDump(&lst, "lst", __FILE__, __FUNCTION__, __LINE__);
-
-    SHUTDOWN_IF_ERROR_FAIL(ListAddElement(&lst, 40, 4));
-    ListDump(&lst, "lst", __FILE__, __FUNCTION__, __LINE__);
-
-    SHUTDOWN_IF_ERROR_FAIL(ListAddElement(&lst, 50, 5));
-    ListDump(&lst, "lst", __FILE__, __FUNCTION__, __LINE__);
-
-    SHUTDOWN_IF_ERROR_FAIL(ListRemoveElement(&lst, 2));
+    SHUTDOWN_IF_ERROR_FAIL(ListAddAfterElement(&lst, 30, 1));
     ListDump(&lst, "lst", __FILE__, __FUNCTION__, __LINE__);
 
     SHUTDOWN_IF_ERROR_FAIL(BuildGraph(&lst, fp));

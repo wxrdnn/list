@@ -49,13 +49,13 @@ void ListFree(List *const list)
     return;
 }
 
-Error ListAddElement(List *const list, const ListElemData_t element, const unsigned number)
+Error ListAddBeforeElement(List *const list, const ListElemData_t element, const unsigned count)
 {
     ASSERT(list);
     ASSERT(list->data);
     ASSERT(list->freeIndexes);
 
-    int prevElementIndex = ListGetElementByNumber(list, number)->prevIndex;
+    int prevElementIndex = ListGetElementByCount(list, count)->prevIndex;
     int nextOfPrevElementIndex = list->data[prevElementIndex].nextIndex;
 
     if (list->freeIndexes[0] <= 0)
@@ -85,7 +85,61 @@ Error ListAddElement(List *const list, const ListElemData_t element, const unsig
     return CreateSuccess();
 }
 
-Error ListRemoveElement(List *const list, const unsigned number)
+Error ListAddAfterElement(List *const list, const ListElemData_t element, const unsigned count)
+{
+    ASSERT(list);
+    ASSERT(list->data);
+    ASSERT(list->freeIndexes);
+
+    int nextElementIndex = ListGetElementByCount(list, count)->nextIndex;
+    int nextOfNextElementIndex = list->data[nextElementIndex].nextIndex;
+
+    if (list->freeIndexes[0] <= 0)
+    {
+        return CreateError(ecNoFreeIndexesLeft, "");
+    }
+    int indexToPlace = list->freeIndexes[0];
+
+    // clang-format off
+    list->data[indexToPlace] =
+    {
+    	.data = element,
+     	.prevIndex = nextElementIndex,
+      	.nextIndex = nextOfNextElementIndex,
+    };
+    // clang-format on
+
+    list->data[nextElementIndex].nextIndex = indexToPlace;
+    list->data[nextOfNextElementIndex].prevIndex = indexToPlace;
+
+    for (int i = 1; i < list->size; i++)
+    {
+        list->freeIndexes[i - 1] = list->freeIndexes[i];
+    }
+    list->freeIndexes[list->size - 1] = cDefaultIndexValue;
+
+    return CreateSuccess();
+}
+
+Error ListAddBeforeHead(List *const list, const ListElemData_t element)
+{
+    ASSERT(list);
+    ASSERT(list->data);
+    ASSERT(list->freeIndexes);
+
+    return ListAddBeforeElement(list, element, ListGetElementCountByIndex(list, list->data[0].prevIndex));
+}
+
+Error ListAddAfterTail(List *const list, const ListElemData_t element)
+{
+    ASSERT(list);
+    ASSERT(list->data);
+    ASSERT(list->freeIndexes);
+
+    return ListAddAfterElement(list, element, ListGetElementCountByIndex(list, 0));
+}
+
+Error ListRemoveElement(List *const list, const unsigned count)
 {
     ASSERT(list);
     ASSERT(list->data);
@@ -100,7 +154,7 @@ Error ListRemoveElement(List *const list, const unsigned number)
 
     // index = list->data[list->data[index].prevIndex].nextIndex;
 
-    ListElement *elemToRemove = ListGetElementByNumber(list, number);
+    ListElement *elemToRemove = ListGetElementByCount(list, count);
     int indexOfElemToRemove = ListGetIndexOfElement(list, elemToRemove);
 
     int prevElementIndex = elemToRemove->prevIndex;
@@ -162,13 +216,13 @@ void ListDump(const List *const lst, const char *name, const char *fileCalledAt,
     return;
 }
 
-ListElement *ListGetElementByNumber(List *const list, const unsigned number)
+ListElement *ListGetElementByCount(List *const list, const unsigned count)
 {
     ASSERT(list);
 
     ListElement *elemPtr = &list->data[0];
 
-    for (unsigned i = 0; i < number; i++)
+    for (unsigned i = 0; i < count; i++)
     {
         elemPtr = &list->data[elemPtr->nextIndex];
     }
@@ -183,4 +237,21 @@ int ListGetIndexOfElement(const List *const list, const ListElement *const eleme
     ASSERT(element - list->data < list->size);
 
     return element - list->data;
+}
+
+unsigned ListGetElementCountByIndex(const List *const list, const int index)
+{
+    ASSERT(list);
+
+    int tailIndex = list->data[0].nextIndex;
+    unsigned c = 0;
+
+    int i = index;
+    while (i != tailIndex)
+    {
+        i = list->data[i].prevIndex;
+        c++;
+    }
+
+    return c;
 }
